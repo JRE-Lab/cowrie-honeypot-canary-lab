@@ -1,0 +1,88 @@
+diff --git a/README.md b/README.md
+index db98634879e8e154cc3f650b87caefcfd21846a4..960a60b32755c12f19ba979a867af4c76e9d0460 100644
+--- a/README.md
++++ b/README.md
+@@ -1,16 +1,72 @@
+ # Cowrie Honeypot & Canary Token Lab
+ 
+-This repository contains materials for deploying a Cowrie SSH and Telnet honeypot and using canary tokens to detect unauthorized activity. It guides you through setting up the honeypot, monitoring attacker interactions, generating canary tokens, and forwarding logs to a SIEM.
++This repository delivers a working lab for deploying a Cowrie SSH/Telnet honeypot and adding canary tokens as tripwires. It includes a Docker Compose setup, Cowrie configuration, and starter detections for SIEM platforms.
+ 
+-## Overview
++## What you will build
+ 
+-You will:
+-- Deploy a Cowrie honeypot on a Linux host (or container).
+-- Configure Cowrie to log SSH and Telnet interactions, capturing commands and file downloads.
+-- Generate canary tokens (e.g., web URL, document token) and place them in the honeypot to detect access.
+-- Simulate attacker interaction by connecting to the honeypot and triggering the canary tokens.
+-- Send Cowrie logs and canary alerts to a SIEM such as Splunk or Sentinel for centralized monitoring.
+-- Write detection queries and build alerts for honeypot hits and canary token activations.
+-- Document findings and recommend defensive actions.
++- A Cowrie honeypot listening on SSH (2222) and Telnet (2223).
++- Canary token bait files hosted inside the honeypot.
++- Sample detection content for log analytics.
+ 
+-All data used in this lab is synthetic and controlled; no sensitive information is exposed.
++## Prerequisites
++
++- Docker and Docker Compose
++- A Linux host or VM that is isolated from production networks
++
++## Quick start
++
++1. Start the honeypot:
++   ```bash
++   docker compose up -d
++   ```
++
++2. Verify Cowrie is running:
++   ```bash
++   docker compose logs -f cowrie
++   ```
++
++3. Test an attacker session from another machine:
++   ```bash
++   ssh -p 2222 root@<honeypot-ip>
++   ```
++
++   Cowrie simulates logins, so the credentials are intentionally fake. You can
++   try common combinations (for example, `root/root`) and it will present a
++   simulated shell for observation and logging.
++
++4. Explore Cowrie logs on the host:
++   ```bash
++   ls -la data/var/log/cowrie
++   ```
++
++5. Test Telnet access if needed:
++   ```bash
++   telnet <honeypot-ip> 2223
++   ```
++
++## Add canary tokens
++
++1. Create a token at https://canarytokens.org (URL, DNS, or document token).
++2. Replace the placeholder URL in `data/share/README-canary.txt` or create your own bait file in `data/share/`.
++3. Connect to the honeypot and open the bait file to trigger the token alert.
++
++## Configuration notes
++
++- `config/cowrie.cfg` is mounted into the container and controls ports, logging, and share paths.
++- The honeypot share directory is mapped to `data/share` on the host, so you can easily add bait files.
++- Logs are stored on the host at `data/var/log/cowrie`.
++
++## Detection examples
++
++- Sigma rule: `detections/sigma/cowrie_honeypot_activity.yml`
++- Splunk query: `detections/splunk/cowrie_honeypot_hits.spl`
++
++## Cleanup
++
++```bash
++docker compose down -v
++```
++
++## Safety
++
++This lab is intended for defensive training in isolated environments. Do not expose the honeypot to production networks without proper safeguards.
