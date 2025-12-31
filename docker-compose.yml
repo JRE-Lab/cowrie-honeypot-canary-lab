@@ -1,0 +1,23 @@
+diff --git a/docker-compose.yml b/docker-compose.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..b27b010f32c86a26f938e08dffba8ead893ad216
+--- /dev/null
++++ b/docker-compose.yml
+@@ -0,0 +1,17 @@
++version: "3.8"
++
++services:
++  cowrie:
++    image: cowrie/cowrie:latest
++    container_name: cowrie
++    restart: unless-stopped
++    ports:
++      - "2222:2222"
++      - "2223:2223"
++    volumes:
++      - ./config/cowrie.cfg:/cowrie/cowrie.cfg:ro
++      - ./data/var:/cowrie/var
++      - ./data/share:/cowrie/data/share
++    environment:
++      - COWRIE_PORT=2222
++      - COWRIE_TELNET_PORT=2223
