@@ -1,0 +1,32 @@
+diff --git a/detections/sigma/cowrie_honeypot_activity.yml b/detections/sigma/cowrie_honeypot_activity.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..0e76d866a2a6de1af204659125e02bf9c7df4867
+--- /dev/null
++++ b/detections/sigma/cowrie_honeypot_activity.yml
+@@ -0,0 +1,26 @@
++title: Cowrie Honeypot Activity
++id: 62e59dc9-2ff7-4c28-9d76-f1eeb7f7bfef
++description: Detects Cowrie honeypot SSH or Telnet login attempts and suspicious commands.
++status: experimental
++author: lab
++logsource:
++  product: linux
++  service: cowrie
++  category: honeypot
++
++detection:
++  selection_login:
++    eventid:
++      - cowrie.login.failed
++      - cowrie.login.success
++  selection_commands:
++    eventid: cowrie.command.input
++    input|contains:
++      - wget
++      - curl
++      - chmod
++      - bash
++      - python
++  condition: selection_login or selection_commands
++
++level: medium
