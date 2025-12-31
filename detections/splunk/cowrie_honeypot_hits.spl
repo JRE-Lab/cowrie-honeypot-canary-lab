@@ -1,0 +1,9 @@
+diff --git a/detections/splunk/cowrie_honeypot_hits.spl b/detections/splunk/cowrie_honeypot_hits.spl
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec560c88c65eb2c1d3f2ef087969a52a9f8b45bd
+--- /dev/null
++++ b/detections/splunk/cowrie_honeypot_hits.spl
+@@ -0,0 +1,3 @@
++index=cowrie sourcetype=cowrie_json
++| stats count by eventid, src_ip, username, input
++| sort - count
